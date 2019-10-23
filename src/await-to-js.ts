@@ -1,7 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**
- * Resolves a promise to an array containting error (or undefined if promise succeeds),
+ * @param { Promise } promise
+ * @return { Promise }
+ */
+export function promiseVars<T, U = Error>(
+  promise: Promise<T>,
+  errorExt?: object
+): Promise<[U | null, T | undefined]> {
+  return promise
+    .then<[null, T]>((data: T) => [null, data])
+    .catch<[U, undefined]>((err: U) => [err, undefined]);
+}
+
+/**
+ * Resolves a promise to an array containing error (or undefined if promise succeeds),
  * and a result (or null if promise fails)
  * @param promise Promise
  * @param errorExt Additional Information you can pass to the err object
@@ -14,16 +27,16 @@ export function to<T, U = Error>(
   return promise
     .then<[null, T]>((data: T) => [null, data])
     .catch<[U, undefined]>((err: U) => {
-    if (errorExt) {
-      Object.assign(err, errorExt);
-    }
+      if (errorExt) {
+        Object.assign(err, errorExt);
+      }
 
-    return [err, undefined];
-  });
+      return [err, undefined];
+    });
 }
 
 /**
- * Uses Promise.all to resolve with an array containting error (or undefined if all of the promises succeed),
+ * Uses Promise.all to resolve with an array containing error (or undefined if all of the promises succeed),
  * and an array of results (or null if any of the promises fail)
  * @param values An array of Promises.
  * @param errorExt Additional Information you can pass to the err object
@@ -195,12 +208,12 @@ export function toAll<T, U = Error>(
   return Promise.all(values)
     .then<[null, T[]]>((data: T[]) => [null, data])
     .catch<[U, undefined]>((err: any) => {
-    if (errorExt) {
-      Object.assign(err, errorExt);
-    }
+      if (errorExt) {
+        Object.assign(err, errorExt);
+      }
 
-    return [err, undefined];
-  });
+      return [err, undefined];
+    });
 }
 
 export default to;
